@@ -82,12 +82,13 @@ def get_for_district(dist_query,date_query):
 
 def parse_sessions(raw_sessions):
     filtered_sessions = filter(lambda x: str(x["min_age_limit"]) == '18',raw_sessions)
-    for session in filtered_sessions:
-        print(f"Name: {session['name']}",end=", ")
-        print(f"PIN: {session['pincode']}")
+    sites = [site for site in filtered_sessions]
+    return sites
 
 
 def main():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
     sessions = list()
     state_to_get = 'Delhi'
     state_id = get_state_id(state_to_get)
@@ -95,11 +96,14 @@ def main():
     for dist_query in districts:
         print(f"{dist_query:-^80}")
         for date in range(1,32):
-            date_query = create_date_for_query(date,4,2021)
+            date_query = create_date_for_query(date,5,2021)
             res = get_for_district(dist_query,date_query)
             if res and res['sessions']:
-                print(f"{date_query:-^80}")
-                parse_sessions(res['sessions'])
+                sites = parse_sessions(res['sessions'])
+                if sites:
+                    print(f"{date_query:-^80}")
+                    info = map(lambda x:{'name':x['name'],'pincode':x['pincode']},sites)
+                    print(info)
 
 if __name__ == '__main__':
     main()
