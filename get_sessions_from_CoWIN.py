@@ -18,7 +18,7 @@ def get_state_id(state_name):
     try:
         with open('states_list.json','r') as states_list_file:
             states_list = json.load(states_list_file)
-    except OSError:
+    except FileNotFoundError:
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
@@ -26,15 +26,16 @@ def get_state_id(state_name):
         else:
             states_list = req.json()
             with open('states_list.json','w') as states_list_file:
-                json.dump(states_list)
+                json.dump(states_list,states_list_file)
 
-    state = filter(lambda x:x['state_name']==state_name,states_list['states'])
+    state = [state for state in filter(lambda x:x['state_name']==state_name,states_list['states'])]
     if not state:
         possible_states = map(lambda x:x['state_name'],
                 filter(lambda x:x['state_name'].find(state_name) != -1,states_list['states']))
         logger.error("Could not find state {state_name}, try one of {possible_states}")
         sys.exit(1)
     else:
+        logger.info("Returning state id")
         return state[0]['state_id']
 
 
@@ -43,20 +44,21 @@ def get_districts(state_id):
     logger.setLevel(logging.INFO)
 
     call_url = urllib.parse.urljoin(ROOT_URL,LIST_DISTRICTS_ENDPOINT)
-    call_url = f"{call_url}{state_id}")
+    call_url = f"{call_url}{state_id}"
     try:
         with open(f"district_list_{state_id}.json",'r') as district_list_file:
             district_list = json.load(district_list_file)
-    except OSError:
+    except FileNotFoundError:
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
             sys.exit(1)
         else:
             district_list = req.json()
-            with open(f"district_list_{state_id}.json",'r') as district_list_file:
-                json.dump(district_list)
-    districts = map(lambda x: x['district_id'],districts['districts'])
+            with open(f"district_list_{state_id}.json",'w') as district_list_file:
+                json.dump(district_list, district_list_file)
+    districts = map(lambda x: x['district_id'],district_list['districts'])
+    logger.info(f"Returning district list")
     return districts
 
 def create_date_for_query(date,month,year):
@@ -87,7 +89,10 @@ def parse_sessions(raw_sessions):
 
 def main():
     sessions = list()
-    for dist_query in (144,149):
+    state_to_get = 'Delhi'
+    state_id = get_state_id(state_to_get)
+    districts = get_districts(state_id)
+    for dist_query in districts:
         print(f"{dist_query:-^80}")
         for date in range(1,32):
             date_query = create_date_for_query(date,4,2021)
@@ -95,9 +100,6 @@ def main():
             print(f"{date_query:-^80}")
             if res and res['sessions']:
                 parse_sessions(res['sessions'])
-
-
-
 
 if __name__ == '__main__':
     main()
