@@ -97,8 +97,8 @@ def main():
         for date in range(1,32):
             date_query = create_date_for_query(date,4,2021)
             res = get_for_district(dist_query,date_query)
-            print(f"{date_query:-^80}")
             if res and res['sessions']:
+                print(f"{date_query:-^80}")
                 parse_sessions(res['sessions'])
 
 if __name__ == '__main__':
