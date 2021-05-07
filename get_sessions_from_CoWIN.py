@@ -133,9 +133,7 @@ def main():
     logger.setLevel(logging.INFO)
     sessions = list()
     state_to_get = 'Delhi'
-    #state_to_get = 'West Bengal'
     state_id = get_state_id(state_to_get)
-    #districts = list(filter(lambda x: x[0] in (144,149),get_districts(state_id)))
     districts = get_districts(state_id)
     
 
