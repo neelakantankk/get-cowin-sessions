@@ -13,7 +13,11 @@ DISTRICT_ENDPOINT = r'v2/appointment/sessions/public/findByDistrict'
 DISTRICT_CALENDAR_ENDPOINT = r'v2/appointment/sessions/public/calendarByDistrict'
 LIST_DISTRICTS_ENDPOINT = r'v2/admin/location/districts/'
 LIST_STATES_ENDPOINT = r'v2/admin/location/states'
-USER_AGENT_STRING = ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36','Mozilla/5.0 (X11; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9','Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36']
+USER_AGENT_STRING = ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+                     'Mozilla/5.0 (X11; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0',
+                     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9',
+                     'Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36']
+
 HEADERS = {'Accept-Language':'en_US',
            'User-Agent':choice(USER_AGENT_STRING)}
 
