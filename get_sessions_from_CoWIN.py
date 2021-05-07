@@ -5,6 +5,7 @@ import logging
 import logging.config
 import sys
 import datetime
+import argparse
 from calendar import monthrange
 from random import choice
 
@@ -28,7 +29,7 @@ def get_state_id(state_name):
     try:
         with open('states_list.json','r') as states_list_file:
             states_list = json.load(states_list_file)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
@@ -47,7 +48,7 @@ def get_state_id(state_name):
         logger.error("Could not find state {state_name}, try one of {possible_states}")
         sys.exit(1)
     else:
-        logger.info("Returning state id")
+        logger.debug("Returning state id")
         return state[0]['state_id']
 
 
@@ -60,7 +61,7 @@ def get_districts(state_id):
     try:
         with open(f"district_list_{state_id}.json",'r') as district_list_file:
             district_list = json.load(district_list_file)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
@@ -72,7 +73,7 @@ def get_districts(state_id):
             with open(f"district_list_{state_id}.json",'w') as district_list_file:
                 json.dump(district_list, district_list_file)
     districts = map(lambda x: (x['district_id'],x['district_name']),district_list['districts'])
-    logger.info(f"Returning district list")
+    logger.debug(f"Returning district list")
     return districts
 
 def create_date_for_query(date,month,year):
@@ -134,16 +135,22 @@ def parse_sessions(raw_sessions):
 
 
 def main():
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger()
+    logging.basicConfig()
     logger.setLevel(logging.INFO)
-    sessions = list()
-    state_to_get = 'Delhi'
+
+    parser = argparse.ArgumentParser(description="Get state for which to get vaccination slots. Default: Delhi")
+    parser.add_argument('state',nargs='?',default='Delhi')
+    args = parser.parse_args()
+    logger.info(f"Getting slots for {args.state}")
+    state_to_get = args.state
     state_id = get_state_id(state_to_get)
     districts = get_districts(state_id)
-    
 
     TODAY = datetime.date.today()
     MAX_DAYS = monthrange(TODAY.year, TODAY.month)[1]
+
+    sessions = list()
 
     for date in range(TODAY.day,MAX_DAYS+TODAY.day,7):
         date_query = create_date_for_query(date,TODAY.month,TODAY.year)
