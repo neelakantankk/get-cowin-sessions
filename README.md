@@ -2,6 +2,8 @@
 
 This script shows all sessions for all districts in a state where the minimum age limit is 18 and available capacity is >0. The state name is passed as a command-line argument, defaults to Delhi if not provided. If the state name does not match the list of states, the script outputs possible states for the user to decide on.
 
+*Requires requests*
+
 ### Usage
 `python3 get_sessions_from_CoWIN.py [state-name]`
 
