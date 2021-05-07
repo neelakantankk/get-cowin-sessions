@@ -4,6 +4,9 @@ This script shows all sessions for all districts in a state where the minimum ag
 
 ### Usage
 `python3 get_sessions_from_CoWIN.py [state-name]`
+State names with a space in them, such as West Bengal or Uttar Pradesh, should be put in quotes. For example:
+`python3 get_sessions_from_CoWIN.py "Uttar Pradesh"`
+
 
 Right now, it just prints to command line. But it could be modified to have a mail or message notification sent if there are slots available. 
 

@@ -43,9 +43,9 @@ def get_state_id(state_name):
 
     state = [state for state in filter(lambda x:x['state_name']==state_name,states_list['states'])]
     if not state:
-        possible_states = map(lambda x:x['state_name'],
-                filter(lambda x:x['state_name'].find(state_name) != -1,states_list['states']))
-        logger.error("Could not find state {state_name}, try one of {possible_states}")
+        possible_states = list(map(lambda x:x['state_name'],
+                filter(lambda x:x['state_name'].find(state_name) != -1,states_list['states'])))
+        logger.error(f"Could not find state {state_name}, try one of {possible_states}")
         sys.exit(1)
     else:
         logger.debug("Returning state id")
