@@ -4,5 +4,5 @@ This script shows all sessions for all districts in Delhi where minimum age limi
 
 Right now, it just prints to command line. But it could be modified to have a mail or message notification sent if there are slots available. 
 
-# Making online registration mandatory for vaccinations agaist a deadly pandemic is a really exclusionary and, frankly, stupid move. The longer it takes for people to get vaccinated, the longer this pandemic will go on, and the more chance of vaccine-resistance variants popping up.
+## Making online registration mandatory for vaccinations agaist a deadly pandemic is a really exclusionary and, frankly, stupid move. The longer it takes for people to get vaccinated, the longer this pandemic will go on, and the more chance of vaccine-resistance variants popping up.
 
