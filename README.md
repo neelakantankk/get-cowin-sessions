@@ -1,6 +1,9 @@
-# Get Sessions for Delhi from CoWin using Public APIs
+# Get Sessions for Delhi from CoWIN using Public APIs
 
-This script shows all sessions for all districts in Delhi where minimum age limit is 18 and available capacity is >0. The state name is a variable in the script so should be possible to do it for other states as well. 
+This script shows all sessions for all districts in a state where the minimum age limit is 18 and available capacity is >0. The state name is passed as a command-line argument. If the state name does not match the list of states, the script outputs possible states for the user to decide on.
+
+### Usage
+`python3 get_sessions_from_CoWIN.py [state-name]`
 
 Right now, it just prints to command line. But it could be modified to have a mail or message notification sent if there are slots available. 
 
