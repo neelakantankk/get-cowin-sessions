@@ -29,7 +29,7 @@ def get_state_id(state_name):
     try:
         with open('states_list.json','r') as states_list_file:
             states_list = json.load(states_list_file)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
+    except (FileNotFoundError, json.JSONDecodeError):
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
@@ -61,7 +61,7 @@ def get_districts(state_id):
     try:
         with open(f"district_list_{state_id}.json",'r') as district_list_file:
             district_list = json.load(district_list_file)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
+    except (FileNotFoundError, json.JSONDecodeError):
         req = requests.get(call_url,headers=HEADERS)
         if req.status_code != 200:
             logger.error(f"{call_url} returned {req.status_code}")
@@ -72,7 +72,7 @@ def get_districts(state_id):
             district_list = req.json()
             with open(f"district_list_{state_id}.json",'w') as district_list_file:
                 json.dump(district_list, district_list_file)
-    districts = map(lambda x: (x['district_id'],x['district_name']),district_list['districts'])
+    districts = list(map(lambda x: (x['district_id'],x['district_name']),district_list['districts']))
     logger.debug(f"Returning district list")
     return districts
 
@@ -150,9 +150,8 @@ def main():
     TODAY = datetime.date.today()
     MAX_DAYS = monthrange(TODAY.year, TODAY.month)[1]
 
-    sessions = list()
-
-    for date in range(TODAY.day,MAX_DAYS+TODAY.day,7):
+    for date in range(TODAY.day,MAX_DAYS+1,7):
+        logger.info(f"Getting for week of {date}")
         date_query = create_date_for_query(date,TODAY.month,TODAY.year)
         sessions_this_week = dict()
         for dist_query,dist_name in districts:
