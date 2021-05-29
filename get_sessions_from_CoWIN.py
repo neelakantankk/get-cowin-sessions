@@ -37,6 +37,7 @@ def get_state_id(state_name):
                 logger.error(f"403 FORBIDDEN")
             sys.exit(1)
         else:
+            logger.debug(f"{call_url} : {req.status_code}")
             states_list = req.json()
             with open('states_list.json','w') as states_list_file:
                 json.dump(states_list,states_list_file)
@@ -69,6 +70,7 @@ def get_districts(state_id):
                 logger.error(f"403 FORBIDDEN")
             sys.exit(1)
         else:
+            logger.debug(f"{call_url} : {req.status_code}")
             district_list = req.json()
             with open(f"district_list_{state_id}.json",'w') as district_list_file:
                 json.dump(district_list, district_list_file)
@@ -96,6 +98,7 @@ def get_for_district(call_url,dist_query,date_query):
             sys.exit(1)
         return None
     else:
+        logger.debug(f"{call_url} : {req.status_code}")
         return req.json()
 
 def get_day_for_district(dist_query,date_query):
@@ -112,18 +115,21 @@ def get_day_for_district(dist_query,date_query):
    
 
 def get_week_for_district(dist_query, date_query):
+    logger = logging.getLogger(__name__)
     call_url = urllib.parse.urljoin(ROOT_URL,DISTRICT_CALENDAR_ENDPOINT)
     res = get_for_district(call_url,dist_query,date_query)
     info = dict()
     if res:
         for center in res['centers']:
             if center['sessions']:
-                sessions_by_date = {session['date']:{'name':center['name'],'available':session['available_capacity'],'pincode':center['pincode'],
-                    'vaccine': session['vaccine'],'fee':center['fee_type'],'address':center['address']}
-                                                     for session in center['sessions'] if session['min_age_limit'] == 18 and session['available_capacity']>0}
+                sessions_by_date = {session['date']:{'name':center['name'],'available':session['available_capacity'],'dose1':session['available_capacity_dose1'],
+                                                     'pincode':center['pincode'],'vaccine': session['vaccine'],'fee':center['fee_type'],'address':center['address']}
+                                                     for session in center['sessions'] if session['min_age_limit'] == 18 and session['available_capacity']>0 and
+                                                     session['available_capacity_dose1']>0}
             for date in sorted(sessions_by_date.keys()):
                 session = info.setdefault(date,[])
                 session.append(sessions_by_date[date])
+        logger.debug(f"Info --> {len(info)}")
         return info
     else:
         return None
@@ -161,7 +167,7 @@ def main():
             for date,sessions in sessions_this_week[dist_name].items():
                 print(f"{date:-^80}")
                 for session in sessions:
-                    print(f"{session['name']} - {session['address']} - {session['pincode']} - {session['vaccine']} - {session['fee']} - {session['available']}")
+                    print(f"{session['name']} - {session['address']} - {session['pincode']} - {session['vaccine']} - {session['fee']} - {session['available']} - Dose 1: {session['dose1']}")
 
 
 if __name__ == '__main__':
